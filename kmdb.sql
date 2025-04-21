@@ -117,94 +117,96 @@ DROP TABLE IF EXISTS actors;
 DROP TABLE IF EXISTS movies;
 DROP TABLE IF EXISTS studios;
 
--- Create new tables, according to your domain model
--- 
+-- Studios
 CREATE TABLE studios (
-    studio_id INTEGER PRIMARY KEY,
-    name TEXT
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT
 );
 
+-- Movies
 CREATE TABLE movies (
-    movie_id INTEGER PRIMARY KEY,
-    title TEXT,
-    year_released INTEGER,
-    rating TEXT,
-    studio_id INTEGER,
-    FOREIGN KEY (studio_id) REFERENCES studios(studio_id)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT,
+  year_released INTEGER,
+  rating TEXT,
+  studio_id INTEGER
 );
 
+-- Actors
 CREATE TABLE actors (
-    actor_id INTEGER PRIMARY KEY,
-    name TEXT
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT
 );
 
+-- Roles
 CREATE TABLE roles (
-    role_id INTEGER PRIMARY KEY,
-    movie_id INTEGER,
-    actor_id INTEGER,
-    character_name TEXT,
-    FOREIGN KEY (movie_id) REFERENCES movies(movie_id),
-    FOREIGN KEY (actor_id) REFERENCES actors(actor_id)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  movie_id INTEGER,
+  actor_id INTEGER,
+  character_name TEXT
 );
 
 -- Insert data into your database that reflects the sample data shown above
 -- Use hard-coded foreign key IDs when necessary
 -- 
 -- Studios
-INSERT INTO studios (studio_id, name) VALUES (1, 'Warner Bros.');
+INSERT INTO studios (name) VALUES ('Warner Bros.');
 
 -- Movies
-INSERT INTO movies (movie_id, title, year_released, rating, studio_id) VALUES 
-(1, 'Batman Begins', 2005, 'PG-13', 1),
-(2, 'The Dark Knight', 2008, 'PG-13', 1),
-(3, 'The Dark Knight Rises', 2012, 'PG-13', 1);
+INSERT INTO movies (title, year_released, rating, studio_id) VALUES
+('Batman Begins', 2005, 'PG-13', 1),
+('The Dark Knight', 2008, 'PG-13', 1),
+('The Dark Knight Rises', 2012, 'PG-13', 1);
 
 -- Actors
-INSERT INTO actors (actor_id, name) VALUES
-(1, 'Christian Bale'),
-(2, 'Michael Caine'),
-(3, 'Liam Neeson'),
-(4, 'Katie Holmes'),
-(5, 'Gary Oldman'),
-(6, 'Heath Ledger'),
-(7, 'Aaron Eckhart'),
-(8, 'Maggie Gyllenhaal'),
-(9, 'Tom Hardy'),
-(10, 'Joseph Gordon-Levitt'),
-(11, 'Anne Hathaway');
+INSERT INTO actors (name) VALUES
+('Christian Bale'),          -- id = 1
+('Michael Caine'),           -- id = 2
+('Liam Neeson'),             -- id = 3
+('Katie Holmes'),            -- id = 4
+('Gary Oldman'),             -- id = 5
+('Heath Ledger'),            -- id = 6
+('Aaron Eckhart'),           -- id = 7
+('Maggie Gyllenhaal'),       -- id = 8
+('Tom Hardy'),               -- id = 9
+('Joseph Gordon-Levitt'),    -- id = 10
+('Anne Hathaway');           -- id = 11
 
 -- Roles
-INSERT INTO roles (role_id, movie_id, actor_id, character_name) VALUES
-(1, 1, 1, 'Bruce Wayne'),
-(2, 1, 2, 'Alfred'),
-(3, 1, 3, 'Ra''s Al Ghul'),
-(4, 1, 4, 'Rachel Dawes'),
-(5, 1, 5, 'Commissioner Gordon'),
-(6, 2, 1, 'Bruce Wayne'),
-(7, 2, 6, 'Joker'),
-(8, 2, 7, 'Harvey Dent'),
-(9, 2, 2, 'Alfred'),
-(10, 2, 8, 'Rachel Dawes'),
-(11, 3, 1, 'Bruce Wayne'),
-(12, 3, 5, 'Commissioner Gordon'),
-(13, 3, 9, 'Bane'),
-(14, 3, 10, 'John Blake'),
-(15, 3, 11, 'Selina Kyle');
+-- Batman Begins (movie_id = 1)
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES
+(1, 1, 'Bruce Wayne'),
+(1, 2, 'Alfred'),
+(1, 3, 'Ra''s Al Ghul'),
+(1, 4, 'Rachel Dawes'),
+(1, 5, 'Commissioner Gordon'),
+
+-- The Dark Knight (movie_id = 2)
+(2, 1, 'Bruce Wayne'),
+(2, 6, 'Joker'),
+(2, 7, 'Harvey Dent'),
+(2, 2, 'Alfred'),
+(2, 8, 'Rachel Dawes'),
+
+-- The Dark Knight Rises (movie_id = 3)
+(3, 1, 'Bruce Wayne'),
+(3, 5, 'Commissioner Gordon'),
+(3, 9, 'Bane'),
+(3, 10, 'John Blake'),
+(3, 11, 'Selina Kyle');
 
 -- Prints a header for the movies output
 .print "Movies"
 .print "======"
 .print ""
 
--- The SQL statement for the movies output
--- 
 SELECT 
     m.title, 
     m.year_released, 
     m.rating, 
     s.name
 FROM movies m
-JOIN studios s ON m.studio_id = s.studio_id;
+JOIN studios s ON m.studio_id = s.id;
 
 -- Prints a header for the cast output
 .print ""
@@ -212,14 +214,11 @@ JOIN studios s ON m.studio_id = s.studio_id;
 .print "========"
 .print ""
 
-
--- The SQL statement for the cast output
--- 
 SELECT 
     m.title, 
     a.name, 
     r.character_name
 FROM roles r
-JOIN movies m ON r.movie_id = m.movie_id
-JOIN actors a ON r.actor_id = a.actor_id
-ORDER BY m.movie_id, r.role_id;
+JOIN movies m ON r.movie_id = m.id
+JOIN actors a ON r.actor_id = a.id
+ORDER BY m.id, r.id;
